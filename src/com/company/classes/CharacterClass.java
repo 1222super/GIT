@@ -1,20 +1,27 @@
 package com.company.classes;
 
+import com.company.Constants;
+
 import javax.swing.*;
 import java.awt.*;
 
 public abstract class CharacterClass implements BaseClass {
+    public static int [][] occupiedCells = new int [Constants.WINDOW_WEIGHT][Constants.WINDOW_HEIGHT];
+    private static int playerCount = 0;
     private int healthPoints = 200;
     private int manaPoints;
     private int level;
     private AttackType attackType;
     private int attackAmount;
+    private int id;
     private String name;
     private int maxHealthPoints;
     private int maxManaPoints;
     public int leftKey, rightKey, upKey, downKey, leftAttackKey, rightAttackKey;
 
     public CharacterClass(String name, int x, int y, int leftKey, int rightKey, int upKey, int downKey, int leftAttackKey, int rightAttackKey) {
+        this.id = ++playerCount;
+        occupiedCells[x][y] = this.id;
         this.name = name;
         this.x = x;
         this.y = y;
@@ -108,9 +115,11 @@ public abstract class CharacterClass implements BaseClass {
         return maxManaPoints;
     }
 
-    @Override
-    public void attack() {
+
+    public void attack(CharacterClass attackedPlayer) {
+        attackedPlayer.reduceHeath(this.attackAmount);
     }
+
 
     @Override
     public void restoreHealth(int amount) {
@@ -201,7 +210,18 @@ public abstract class CharacterClass implements BaseClass {
     public abstract void rightAttack();
 
     public void tryChangePosition(int newX, int newY){
-        this.x = newX;
-        this.y = newY;
+        if(occupiedCells[newX][newY] == 0) {
+            occupiedCells[this.x][this.y] = 0;
+            this.x = newX;
+            this.y = newY;
+            occupiedCells[this.x][this.y] = this.id;
+        }else{
+            reduceHeath(50);
+        }
+    }
+
+    private void reduceHeath(int amount) {
+
+        setHealthPoints(this.healthPoints - amount);
     }
 }

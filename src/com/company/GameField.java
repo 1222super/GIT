@@ -24,7 +24,7 @@ public class GameField extends JPanel {
 
         for (CharacterClass player : players) {
             g.drawImage(player.getImage(), player.getX(), player.getY(), this);
-            g.drawString("healthPoints: " + player.getHealthPoints(), player.getX(), player.getY());
+            g.drawString("healthPoints: " + player.getHealthPoints(), player.getX(), player.getY() + 70);
         }
     }
 
@@ -50,9 +50,16 @@ public class GameField extends JPanel {
                     player.down();
                     //player.setY(player.getY() + 40);
                 }
+
                 if (key == player.leftAttackKey) {
                     player.leftAttack();
-                    //player.setAttackLeftImage();
+                    player.setAttackLeftImage();
+                    int neighmId = CharacterClass.occupiedCells[player.getX() - 40][player.getY()];
+                    if(player.getX() > 40 && neighmId > 0)
+                    {
+                        player.attack(players[neighmId]);
+                    }
+
 
                     //timer
                     new java.util.Timer().schedule(
@@ -67,7 +74,7 @@ public class GameField extends JPanel {
                 }
                 if (key == player.rightAttackKey) {
                     player.rightAttack();
-                    //player.setAttackRightImage();
+                    player.setAttackRightImage();
 
                     //timer
                     new java.util.Timer().schedule(
